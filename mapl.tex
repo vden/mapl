@@ -1,0 +1,265 @@
+%\RequirePackage{etex}
+\documentclass{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{epigraph}
+\usepackage{fancyvrb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage[dvips]{color}
+\usepackage[arrow,curve,matrix,frame]{xy}
+\usepackage{indentfirst}	% Русская типографика требует красную строку
+%\usepackage{MnSymbol}
+\usepackage{array}
+\usepackage{ifmtarg}
+\usepackage{centernot}
+\usepackage{empheq}
+\usepackage{needspace}
+\usepackage{colonequals}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning}
+
+%\usepackage{fancybox}
+%% Я хотел использовать fancybox ради \ovalbox, но он определяет свой
+%% собственный Verbatim, который конфликтует с fancyvrb.
+%% В конце концов нужно будет либо выдернуть оттуда определение
+%% \ovalbox, либо отказаться от fancyvrb. Пока что я просто не делаю
+%% круглых углов.
+\newcommand{\ovalbox}[1]{\fbox{#1}}
+
+\setlength{\epigraphwidth}{7cm}
+
+\usepackage{longtable,citehack,enumerate}
+\usepackage{tocbibind}
+%\usepackage[unicode,colorlinks=true,a4paper]{hyperref}
+\usepackage[unicode,a4paper]{hyperref}
+\definecolor{pfpcolorint}{rgb}{0,0.4,0}
+\definecolor{pfpcolorext}{rgb}{0,0,0.6}
+
+\hypersetup{colorlinks,
+	linkcolor=pfpcolorint,
+	citecolor=pfpcolorint,
+	filecolor=pfpcolorext,
+	urlcolor=pfpcolorext,
+	bookmarksopen,bookmarksopenlevel=0,
+	pdffitwindow,
+	pdftitle={Магнус Лай Хетланд. Алгоритмы в Python},
+	% pdfsubject={},
+	% pdfkeywords={}
+}
+
+
+% 70х100/16 -> 170mmх240mm
+\usepackage[papersize={165mm,240mm},hmargin={2.5cm,1.5cm},vmargin={2cm,2cm},twoside]{geometry}
+
+\usepackage[dvipdfm]{accsupp} % Контролирует эффект копирования из PDF
+
+% headers & footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\include{version}
+\fancyhead{}
+\fancyhead[RE,LO]{\slshape{\rightmark{}}}
+\fancyhead[LE,RO]{\thepage{}}
+%\fancyfoot{}
+%\fancyfoot[LE,RO]{rev. \svnInfoMaxRevision}
+% 
+\usepackage{graphicx}
+
+\usepackage[round]{natbib}
+\bibliographystyle{plainnat}
+\renewcommand{\cite}{\citep*}
+\newcommand{\citeterse}{\citep}
+\newcommand{\citeyr}[1]{(\citeyear{#1})}
+\newcommand{\citeyropen}[1]{\citeyear{#1}}
+\newcommand{\fulllongcite}[1]{\citeauthor*{#1} \citeyearpar{#1}}
+\newcommand{\citeopen}[1]{\citealp*{#1}}
+\newcommand{\citeopenterse}[1]{\citealp{#1}}
+
+\usepackage{listings}
+\definecolor{listingcomment}{gray}{0.3}
+\lstset{%
+  basicstyle=\small\ttfamily\upshape,
+  showtabs=false, 
+  showspaces=false, 
+  showstringspaces=false,
+  tabsize=2,
+  language=Python,
+  commentstyle=\color{listingcomment},
+  extendedchars=\true{},
+  mathescape=\true{},% allows to use math symbols in listings - may be
+                     % dangerous
+  keywordstyle={}}
+% замена буквосочетаний на симпатичные символы
+\lstset{literate={->}{{$\to{}$}}1 {=>}{{$\Rightarrow$}}2 {|>}{{$\triangleright{}$}}1}
+
+% \lstinline мешается в таблицах (пока не понял, почему) -- goga
+%\newcommand{\code}[1]{\lstinline[mathescape]!#1!}
+\newcommand{\code}[1]{\texttt{#1}}
+
+%% proper captions for figures, etc
+\RequirePackage{caption}
+\captionsetup{labelsep=period,labelfont=bf}
+
+% Добавляем точку после номера раздела
+\usepackage{titlesec}
+\titlelabel{\thetitle.\quad}
+\usepackage[dotinlabels]{titletoc}
+
+% settings for floating objects
+\renewcommand{\topfraction}{.9}
+\renewcommand{\textfraction}{.1}
+\renewcommand{\bottomfraction}{.9}
+%\renewcommand{\floatpagefraction}{.9}
+%\renewcommand{\dblfloatpagefraction}{\floatpagefraction}
+% \setcounter{topnumber}{4}
+% \setcounter{bottomnumber}{4}
+% \setcounter{totalnumber}{4}
+% \setlength{\floatsep}{8pt plus 2pt minus 2pt}
+% \setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+% \setlength{\intextsep}{12pt plus 2pt minus 2pt}
+
+% Custom commands
+\newcommand{\<}{\langle}
+\renewcommand{\>}{\rangle}
+\newcommand{\nbdash}{\mbox{-}}
+\newcommand{\nosol}{\nrightarrow}
+\newcommand{\recommended}{\textsc{Рекомендуется}}
+
+\newcommand{\lambdaterm}[1]{\mbox{\code{#1}}}
+\newcommand{\nbcode}[1]{\mbox{\code{#1}}}
+\newcommand{\ocode}[1]{\overline{\vphantom{A}\code{#1}}}
+
+\newcommand{\defterm}[1]{\emph{#1}}
+
+\newcommand{\ruleid}[1]{\mbox{\textsc{#1}}}
+\newcommand{\ruletag}[1]{\tag{\textsc{#1}}\index{правило!\textsc{#1}}}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\dom}{\textit{dom}}
+\newcommand{\range}{\textit{range}}
+\newcommand{\fail}{\textit{неудача}}
+\newcommand{\function}[1]{\mbox{\textit{#1}\,}}
+\newcommand{\interpreter}[1]{\texttt{#1}\index{интерпретатор!\texttt{#1}}}
+
+\newcommand{\Fsub}{F$_{\code{<:}}$}
+\newcommand{\Fomega}{F$_\omega$}
+\newcommand{\Fsubomega}{F$_{\code{<:}}^\omega$}
+
+\renewcommand{\L}{\ensuremath{\lambda}}
+
+\newcommand{\eqdef}{\stackrel{\text{\tiny def}}{=}}
+
+\newcommand{\size}[1]{\bar #1 \bar}
+
+\newcommand{\varrow}{\mbox{\strut\ensuremath{\:\Mapstochar\shortrightarrow\:}}}
+\newcommand{\notsub}{\ensuremath{\centernot{\code{\textnormal{<:}}}}}
+
+\definecolor{gray}{gray}{0.75}
+\newcommand{\graybg}[1]{\colorbox{gray}{\mbox{#1}}}
+
+\makeatletter
+\newcommand{\translationnotemark}{{\renewcommand{\@makefnmark}{\mbox{$^*$}}\footnotemark{}}}
+\newcommand{\translationnotetext}[1]{{\renewcommand{\@makefnmark}{\mbox{$^*$}}\footnotetext{#1~---~{\it прим. перев.}}}\addtocounter{footnote}{-1}}
+\newcommand{\translationnote}[1]{\translationnotemark{}\translationnotetext{#1}}
+\newcommand{\unmarkednote}[1]{{\renewcommand{\@makefnmark}{}\footnotemark{}\footnotetext{#1}}\addtocounter{footnote}{-1}}
+\makeatother
+
+\newcommand{\wearelazy}{\translationnote{При верстке перевода это правило не соблюдалось.}}
+
+\newtheorem{definition}{\texttt{Определение}}[section]
+\newtheorem{exercise}[definition]{\texttt{Упражнение}}
+\newtheorem{axiom}[definition]{\texttt{Аксиома}}
+\newtheorem{proposition}[definition]{\texttt{Утверждение}}
+\newtheorem{lemma}[definition]{\texttt{Лемма}}
+\newtheorem{theorem}[definition]{\texttt{Теорема}}
+\newtheorem{convention}[definition]{\texttt{Соглашение}}
+\newtheorem{corollary}[definition]{\texttt{Следствие}}
+\newtheorem{example}[definition]{\texttt{Пример}}
+\newtheorem{examples}[definition]{\texttt{Примеры}}
+
+\newcommand{\errata}[1]{\relax}
+
+\newcommand{\muheight}{\ensuremath{\mu\mbox{-height}}}
+\newcommand{\recordc}[4]{\ensuremath{\code{#1}_#2{}^{#2\in #3..#4}}}
+
+\newenvironment{exsolution}[1]
+  {\par\smallskip\noindent
+   \ref{#1}. \textsc{Решение:}}{}
+
+%%%
+%%% НОВАЯ ВЕРСТКА ТАБЛИЦ
+%%%
+%%% сначала идёт параграф с заголовком...
+\newcommand{\displayNew}[3]{#1
+
+%%% ... потом верхняя рамка
+\rule[-1ex]{.4pt}{1ex}\rule{\mapltablewidth}{.4pt}\rule[-1ex]{.4pt}{1ex}\smallskip
+
+%%% ... потом две minipage, стоящие рядом через черточку
+\begin{minipage}[t]{.5\mapltablewidth}
+#2
+\end{minipage}
+\vline
+\begin{minipage}[t]{.5\mapltablewidth}
+#3
+\end{minipage}
+
+%%% ... потом нижняя рамка
+\rule{.4pt}{1ex}\rule{\mapltablewidth}{.4pt}\rule{.4pt}{1ex}\par
+}
+
+\makeatletter
+\newcommand{\tablesection}[2]{\textit{#1}\@ifmtarg{#2}{\relax}{\hfill\fbox{#2}}}
+\makeatother
+
+\newcommand{\displayOneCol}[2]{
+  { % hold \arraystretch redefinition inside the display
+    #1 \\
+    \renewcommand{\arraystretch}{0}
+    \begin{tabular}{|c|}
+      \hline
+      \rule{0pt}{1ex} \\
+      \multicolumn{1}{c}{
+        \renewcommand{\arraystretch}{1}
+        \begin{tabular}{l}
+          #2
+        \end{tabular}
+      } \\
+      \rule{0pt}{1ex} \\
+      \hline
+    \end{tabular}
+  }
+}
+
+\title{Алгоритмы в Python. Проектирование алгоритмов на языке Python}
+\author{Магнус Лай Хетланд}
+
+\begin{document}
+\newlength{\mapltablewidth}
+\setlength{\mapltablewidth}{\linewidth}
+\addtolength\mapltablewidth{-2.8pt}
+\VerbatimFootnotes
+\selectlanguage{russian}%
+\frenchspacing
+\righthyphenmin=2
+\sloppy
+\setcounter{topnumber}{1}
+
+\maketitle
+
+%%% здесь можно комментировать одно и раскомментировать другое, чтобы
+%%% быстро тестировать компиляцию по главам
+%\input{chapter-13.tex}
+\input{all-chapters.tex}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: pdflatex
+%%% TeX-master: t
+%%% End: 
