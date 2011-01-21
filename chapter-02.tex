@@ -236,8 +236,8 @@ False
 						drop shadow]
 \begin{figure}[h]
 \centering
-\begin{tikzpicture}[level/.style={sibling distance=30mm/#1}]
-    \tikzstyle{every node}=[circle,draw]
+\begin{tikzpicture}[level/.style={sibling distance=35mm/#1},style={>=latex,->}]
+    \tikzstyle{every node}=[circle,draw,text centered,minimum height=2.5em]
     \node[tree,draw=red] (z) {}
         child { 
 			node[tree] {}
@@ -258,9 +258,9 @@ False
 			}
 		}
     ;
-	\draw[-latex,color=red] (z) .. controls +(east:0.5cm) and +(north:1.5cm) .. (1) {};
-	\draw[-latex,color=red] (1) .. controls +(right:0.3cm) and +(north:1cm) .. (2) {};
-	\draw[-latex,color=red] (2) .. controls +(left:0.3cm) and +(north:1cm) .. (3) {};
+	\draw[-latex,color=red] (z) .. controls +(east:0.5cm) and +(north west:1.5cm) .. (1) {};
+	\draw[-latex,color=red] (1) .. controls +(south east:0.3cm) and +(north:1cm) .. (2) {};
+	\draw[-latex,color=red] (2) .. controls +(south west:0.3cm) and +(north:1cm) .. (3) {};
 \end{tikzpicture}
 \caption{Пример дерева с отмеченным путем от корня к листу}
 \label{fig:simple-tree}
@@ -270,25 +270,96 @@ False
 В ряде случаев возможно заранее определить максимальное число потомков каждого узла. (Например, каждый узел \textit{бинарного дерева} может иметь до двух потомков). Поэтому можно использовать другие представления, скажем, объекты с отдельным атрибутом для каждого из потомков как в листинге \ref{lst:binary-tree}.
 
 \begin{figure}[h!]
-\begin{lstlisting}[caption={Класс бинарного дерева}, label={lst:binary-tree}]
+\begin{lstlisting}[caption={Класс бинарного дерева и его использование}, label={lst:binary-tree}]
 class Tree:
 	def __init__(self, left, right):
-	self.left = left
-	self.right = right
-
-You can use the Tree class like this:
+		self.left = left
+		self.right = right
 
 >>> t = Tree(Tree("a", "b"), Tree("c", "d"))
 >>> t.right.left
 'c'
 \end{lstlisting}
 \end{figure}
-
 Для обозначения отсутствующих потомков можно использовать \texttt{None} (в случае если у узла только один потомок). Само собой, можно комбинировать разные методы (например, использовать списки или множества потомков для каждого узла).
 
-\newpage
+Распространенный способ реализации деревьев, особенно на языках, не имеющих встроенной поддержки списков, это так называемое представление <<первый потомок, следующий брат>>. В нем каждый узел имеет два <<указателя>> или атрибута, указывающих на другие узлы, как в бинарном дереве. Однако, первый из этих атрибутов ссылается на первого потомка узла, а второй "--- на его следующего брата\translationnote{т.~е. узел, имеющий того же родителя, но находящийся правее}. Иными словами, каждый узел дерева имеет указатель на связанный список его потомков, а каждый из этих потомков ссылается на свой собственный аналогичный список. Таким образом, небольшая модификация бинарного дерева (листинг \ref{lst:binary-tree}) даст нам многопутевое дерево, показанное в листинге \ref{lst:multiway-tree}.
+
+\begin{figure}[h]
+\begin{lstlisting}[caption={Класс многопутевого дерева}, label={lst:multiway-tree}]
+class Tree:
+	def __init__(self, kids, next=None):
+		self.kids = self.val = kids
+		self.next = next
+\end{lstlisting}
+\end{figure}
+
+Отдельный атрибут \texttt{val} здесь введен просто для того, чтобы получить понятный вывод при указании значения (например, <<c>>) вместо ссылки на узел. Естественно, все это можно изменять. Вот пример того, как можно обращаться с этой структурой:
+\begin{lstlisting}
+>>> t = Tree(Tree("a", Tree("b", Tree("c", Tree("d")))))
+>>> t.kids.next.next.val
+'c'
+\end{lstlisting}
+
+А вот как выглядит это дерево:
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[sibling distance=20mm,style={>=latex,->}]
+    \tikzstyle{every node}=[circle,draw,text centered,minimum height=2.5em]
+    \node[tree] (z) {}
+		child { node[tree] (a) {\Large $a$} }
+		child {	node[tree] (b) {\Large $b$} } 
+		child { node[tree] (c) {\Large $c$} }
+		child { node[tree] (d) {\Large $d$} }
+    ;
+	\draw[-latex,dashed,color=white!20!black!80] (z) .. controls +(west:0.5cm) and +(north east:1.5cm) .. (a) {};
+	\draw[-latex,dashed,color=white!20!black!80] (a) -- (b) {};
+	\draw[-latex,dashed,color=white!20!black!80] (b) -- (c) {};
+	\draw[-latex,dashed,color=white!20!black!80] (c) -- (d) {};
+\end{tikzpicture}
+\end{figure}
+
+Атрибуты \texttt{kids} и \texttt{next} показаны пунктирными линиями, а сами ребра дерева "--- сплошными. Я немного схитрил и не стал показывать отдельные узлы для строк <<a>>, <<b>> и т.д. Вместо этого я трактую их как метки на соответствующих родительских узлах. В более сложном дереве вместо использования одного атрибута и для хранения значения узла и для ссылки на список потомков, для обеих целей могут понадобиться отдельный атрибуты. Обычно для обхода дерева используется более сложный код (включая циклы и рекурсию), чем приведенный здесь с жестко заданным путем. Больше об этом написано в главе \ref{chap:traversal}. В главе \ref{chap:combine-divide} также обсуждаются многопутевые деревья и балансировка деревьев.
+
+%%%% BLACK BOX
+{\bf Шаблон проектирования <<Набор>>}
+
+При проектировании (да и реализации) таких структур данных как деревья может оказаться полезным гибкий класс, позволяющий задавать набор атрибутов через конструктор. Здесь нас может выручить шаблон проектирования <<Набор>> (названный так Алексом Мартелли в <<Python Cookbook>>). Есть много способов его реализации, но суть видна из следующего кода:
+\begin{lstlisting}
+class Bunch(dict):
+	def __init__(self, *args, **kwds):
+		super(Bunch, self).__init__(*args, **kwds)
+		self.__dict__ = self
+\end{lstlisting}
+
+Есть несколько полезных способов его применения. Во-первых, он позволяет создать и задать значения атрибутов, передав их как аргументы при создании объекта:
+\begin{lstlisting}
+>>> x = Bunch(name="Jayne Cobb", position="Public Relations")
+>>> x.name
+'Jayne Cobb'
+\end{lstlisting}
+
+Во-вторых, наследование от \texttt{dict} дает много дополнительного функционала, такого как получение всех ключей (атрибутов) или простая проверка наличия атрибута. Вот пример:
+\begin{lstlisting}
+>>> T = Bunch
+>>> t = T(left=T(left="a", right="b"), right=T(left="c"))
+>>> t.left
+{'right': 'b', 'left': 'a'}
+>>> t.left.right
+'b'
+>>> t['left']['right']
+'b'
+>>> "left" in t.right
+True
+>>> "right" in t.right
+False
+\end{lstlisting}
+
+Конечно же этот шаблон можно использовать не только для создания деревьев. Он пригодится в любой ситуации, где необходим гибкий объект, умеющий задавать свои атрибуты при создании.
+
 \subsection{Множество разных представлений}
 
+\newpage
 \section{Beware of Black Boxes}
 \subsection{Hidden Squares}
 \subsection{The Trouble with Floats}
