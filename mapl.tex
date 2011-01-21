@@ -26,6 +26,7 @@
 \usepackage{mdwlist}
 \usepackage{Khartiya}
 
+
 %\usepackage{fancybox}
 %% Я хотел использовать fancybox ради \ovalbox, но он определяет свой
 %% собственный Verbatim, который конфликтует с fancyvrb.
@@ -54,12 +55,42 @@
 	% pdfsubject={},
 	% pdfkeywords={}
 }
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}} 
+\DeclareCaptionFormat{listing}{\colorbox[rgb]{0.91,0.92,0.93}{\parbox{\textwidth}{\rmfamily #1#2#3}}} 
+\captionsetup[lstlisting]{format=listing, singlelinecheck=false, margin=0pt}
 
 \interfootnotelinepenalty=10000
 % 70х100/16 -> 170mmх240mm
 \usepackage[papersize={165mm,240mm},hmargin={1.6cm,2cm},vmargin={2cm,2cm},twoside]{geometry}
 
 \usepackage[dvipdfm]{accsupp} % Контролирует эффект копирования из PDF
+\definecolor{MyGray}{rgb}{0.91,0.92,0.93} 
+
+\makeatletter\newenvironment{graybox}{% 
+   \noindent\begin{lrbox}{\@tempboxa}\begin{minipage}{\columnwidth}}{\end{minipage}\end{lrbox}% 
+   \colorbox{MyGray}{\usebox{\@tempboxa}} 
+}\makeatother 
+\makeatletter 
+\newenvironment{notice}[1]{ 
+  \vspace{1em}
+  \begin{graybox} 
+	\begin{center}
+		\vspace{0.2em}
+		\bf\MakeUppercase{#1}
+%		\vspace{0.2em}
+	\end{center}
+  \end{graybox}
+  \centering\begin{minipage}{0.95\columnwidth}\sffamily
+  \parindent=1.27em
+  \vspace{0.3em}
+} 
+{ 
+  \end{minipage}
+  \vspace{0.5em}
+  \hrule 
+} 
+\makeatother 
 
 % headers & footers
 \usepackage{fancyhdr}
@@ -86,10 +117,12 @@
 %%\usepackage{algorithm}
 
 \usepackage{listings}
+%\usepackage{courier}
 \lstloadlanguages{Python,bash}
 \definecolor{listingcomment}{gray}{0.3}
 \lstset{%
   basicstyle=\ttfamily,
+  columns=fullflexible,
   showtabs=false, 
   showspaces=false, 
   showstringspaces=false,
@@ -108,7 +141,7 @@
 \newcommand{\code}[1]{\texttt{#1}}
 
 %% proper captions for figures, etc
-\RequirePackage{caption}
+%\RequirePackage{caption}
 \captionsetup{labelsep=period,labelfont=bf}
 
 % Добавляем точку после номера раздела
@@ -242,8 +275,6 @@
     \end{tabular}
   }
 }
-
-
 
 \title{Алгоритмы в Python. Проектирование алгоритмов на языке Python}
 \author{Магнус Лай Хетланд}
