@@ -1,5 +1,5 @@
 %\RequirePackage{etex}
-\documentclass{book}
+\documentclass[openany]{book}
 
 \usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
@@ -84,6 +84,7 @@
   \sffamily
   \parindent=1.27em
 %  \vspace{0.3em}
+
 } 
 { 
   \vspace{0.4em}
@@ -96,7 +97,10 @@
 \pagestyle{fancy}
 %\include{version}
 \fancyhead{}
-\fancyhead[LE,RO]{\slshape{\rightmark{}}}
+
+\fancyhead[LE]{\slshape{\leftmark{}}}
+\fancyhead[RO]{\slshape{\rightmark{}}}
+
 %\fancyhead[LE,RO]{\thepage{}}
 %\fancyfoot{}
 %\fancyfoot[LE,RO]{rev. \svnInfoMaxRevision}
@@ -137,7 +141,7 @@
 
 % \lstinline мешается в таблицах (пока не понял, почему) -- goga
 %\newcommand{\code}[1]{\lstinline[mathescape]!#1!}
-\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\code}[1]{\noindent\texttt{#1}}
 
 %% proper captions for figures, etc
 %\RequirePackage{caption}
